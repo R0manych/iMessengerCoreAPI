@@ -26,7 +26,7 @@ namespace iMessengerCoreAPI.Controllers
         /// <param name="clientIds">Cписок идентфикаторов клиентов для которых необходимо найти диалог</param>
         /// <returns>Список диалогов в котором есть все указанные клиенты.</returns>
         [HttpPost]
-        public IEnumerable<Guid> GetRGDialogs ([FromBody]IEnumerable<Guid> clientIds)
+        public Guid GetRGDialogs ([FromBody]IEnumerable<Guid> clientIds)
         {
             return _dialogService.SearchRGDialogsForClients(clientIds);                        
         }          

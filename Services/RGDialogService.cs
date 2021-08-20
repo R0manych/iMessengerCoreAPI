@@ -24,7 +24,7 @@ namespace iMessengerCoreAPI.Services
         /// </summary>
         /// <param name="clientIds">Список клиентов диалога.</param>
         /// <returns>Список диалогов в котором есть все клиенты из списка</returns>
-        public IEnumerable<Guid> SearchRGDialogsForClients(IEnumerable<Guid> clientIds)
+        public Guid SearchRGDialogsForClients(IEnumerable<Guid> clientIds)
         {
             var dialogsWithClientsIds = _clients.Select(p => p.IDRGDialog).Distinct();
             var dialogsWithClients = new List<RGDialogsClients>();
@@ -36,7 +36,13 @@ namespace iMessengerCoreAPI.Services
                 i++;
             }
 
-            return dialogsWithClientsIds.Any() ? dialogsWithClientsIds : new List<Guid>() { Guid.Empty };
+            if (dialogsWithClientsIds.Count() > 1)
+            {
+                var possibleDialogs = _clients.GroupBy(p => p.IDRGDialog).Where(t => t.Count() == clientIds.Count());
+                return (dialogsWithClientsIds.FirstOrDefault(p => _clients.GroupBy(c => c.IDRGDialog).Where(t => t.Count() == clientIds.Count() && t.Key == p).Any()));
+            }
+
+            return dialogsWithClientsIds.FirstOrDefault();
         }
 
         private IEnumerable<RGDialogsClients> GetAllDialogsForClient(IEnumerable<Guid> dialogIds, Guid clientId) =>
